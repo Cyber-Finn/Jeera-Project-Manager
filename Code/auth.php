@@ -23,7 +23,7 @@ function isAuthenticated() {
             // echo "Password hash from calculation: ". $hash. "<br>";
             // echo "Password: " . $password . "<br>";
 
-            //loading users will be a bit tricky, because the pword hash changes every time due to random salting
+
             if (!$user || !password_verify($password, $user['password_hash'])) { //if pword doesn't match or there is no user loaded
                 echo json_encode(['message' => 'Unauthorized']);
                 exit;

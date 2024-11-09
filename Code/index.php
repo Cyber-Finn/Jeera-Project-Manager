@@ -16,8 +16,11 @@ switch ($action) {
     case 'get_tasks':
         require_once 'get_tasks.php';
         break;
-    case 'update_task':
-        require_once 'update_task.php';
+    case 'update_task_details':
+        require_once 'update_task_details.php';
+        break;
+    case 'update_task_status':
+        require_once 'update_task_status.php';
         break;
     case 'complete_task':
         require_once 'complete_task.php';

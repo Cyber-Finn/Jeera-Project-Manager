@@ -1,0 +1,172 @@
+/* Basic styles for the body */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  /* Header styles */
+  #header {
+    font-size: 32px; /* Increased font size */
+    margin-bottom: 40px; /* Increased margin */
+    background: #0056b3; /* Slightly darker blue shade */
+    color: white;
+    width: 100%; /* Full-width header */
+    text-align: center; /* Centered text */
+    padding: 20px 0; /* Padding for height */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+  }
+  
+  /* Button to open the modal */
+  #createTaskButton {
+    position: fixed;
+    top: 6%;
+    right: 60px;
+    background-color: #61aaf8; /* Updated to a nice blue shade */
+    color: white;
+    font-size: 20px; /* Slightly smaller font size */
+    border: none;
+    padding: 10px 20px; /* Adjusted padding */
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  }
+  
+  /* Hover effect for the button */
+  #createTaskButton:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Tooltip styles */
+  #createTaskButton::after {
+    content: "Add a task";
+    position: absolute;
+    top: -30px; /* Position above the button */
+    right: 0;
+    background: white;
+    color: #0056b3;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Show tooltip on hover */
+  #createTaskButton:hover::after {
+    opacity: 1;
+  }
+  
+  /* The modal background */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Modal content box */
+  .modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Close button for the modal */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  /* Form styles inside the modal */
+  #taskForm {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #taskForm label {
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  #taskForm input,
+  #taskForm textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  #taskForm button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  #taskForm button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Task columns */
+  #tasks-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    padding-top: 1%;
+  }
+  
+  .column {
+    width: 30%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    min-height: 300px;
+    background: #f9f9f9;
+  }
+  
+  /* Task card styles */
+  .task-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    cursor: move;
+  }
+  
+  .task-card.completed {
+    background: #e0e0e0;
+    color: #888;
+  }
+  
+  /* Center column titles */
+  #todo-column>h3,
+  #in-progress-column>h3,
+  #done-column>h3 {
+    text-align: center;
+  }
+  
