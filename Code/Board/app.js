@@ -1,8 +1,6 @@
 //this happens as soon as the document is ready to load -> equivalent to the body onload function
 $(document).ready(function() {
-    // Define global functions to make them accessible at our inline statements in the HTML
-    //  This is so that we can access OpenCreateModal and CloseModal from the HTML element onclicks
-    // This method triggers when the user clicks the big + button to add a task
+    
     window.openCreateModal = function() { 
         $('#taskId').val(''); 
         $('#title').val(''); 
@@ -12,92 +10,11 @@ $(document).ready(function() {
         $('#taskForm')[0].reset(); 
         $('#taskModal').show(); // Show the modal 
         } 
-        // Happens when the x button is clicked on the modal -> to close the form
+        
         window.closeModal = function() { 
             $('#taskModal').hide(); // Hide the modal
         }
 
-    // Allow drop event handler
-    window.allowDrop = function(event) {
-      event.preventDefault();
-    }
-
-    // Drag event handler
-    window.drag = function(event) {
-      const taskId = event.target.id;
-      console.log('Dragging task:', taskId); // Debug log
-      event.originalEvent.dataTransfer.setData("text/plain", taskId);
-    }
-
-    // Drop event handler
-    window.drop = function(event) {
-      event.preventDefault();
-      const data = event.dataTransfer.getData("text/plain"); //todo: having an issue with this where it can't access the dataTransfer method... Previously had these as a function, but then couldn't access it from outside HTML, so when we create the tasks, they would fail to call this when ondrop, etc.
-      const taskCard = document.getElementById(data);
-
-      if (!taskCard) {
-        console.error('No task card found for data:', data);
-        return;
-      }
-
-      const taskId = taskCard.dataset.id;
-      if (!taskId) {
-        console.error('Task card has no dataset id:', taskCard);
-        return;
-      }
-
-      const column = $(event.target).closest('.column');
-      if (!column.length) {
-        console.error('No column found for target:', event.target);
-        return;
-      }
-
-      // Adjust status ID mapping
-      const newStatus = column.attr('id');
-      let statusId;
-      switch (newStatus) {
-        case 'todo-column':
-          statusId = 1;
-          break;
-        case 'in-progress-column':
-          statusId = 2;
-          break;
-        case 'done-column':
-          statusId = 3;
-          break;
-        default:
-          console.error('Invalid new status:', newStatus);
-          return; // Exit function to prevent sending invalid status
-      }
-
-      // Update task card style based on the new status
-      if (newStatus === 'done-column') {
-        $(taskCard).addClass('completed').attr('draggable', false);
-      } else {
-        $(taskCard).removeClass('completed').attr('draggable', true);
-      }
-
-      const title = $(taskCard).find('h3').text();
-      const description = $(taskCard).find('p').first().text().split('Due: ')[0];
-
-      ajaxRequest('update_task_status.php', 'POST', {
-        id: taskId,
-        status_id: statusId,
-        title: title,
-        description: description
-      }, function(response) {
-        if (response.message === 'Task updated successfully') {
-          loadTasks();
-        } else {
-          alert('Failed to update task.');
-        }
-      });
-
-      column.append(taskCard);
-    }
-    
-    // AJAX request function using jQuery
-    //  This is a generic function we've created that we reuse throughout all the other methods of sending/updating data
     function ajaxRequest(url, method, formData, callback) {
       $.ajax({
         url: url,
@@ -168,56 +85,172 @@ $(document).ready(function() {
   
     // Function to load tasks and populate the columns
     function loadTasks() {
-      ajaxRequest('index.php?action=get_tasks', 'GET', null, function(response) {
-        const todoColumn = $('#todo-column');
-        const inProgressColumn = $('#in-progress-column');
-        const doneColumn = $('#done-column');
-  
-        todoColumn.html('<h3>To Do</h3>');
-        inProgressColumn.html('<h3>In Progress</h3>');
-        doneColumn.html('<h3>Done</h3>');
-  
-        if (!response.tasks || response.tasks.length === 0) {
-          todoColumn.append('<p>No tasks to display</p>');
-          inProgressColumn.append('<p>No tasks to display</p>');
-          doneColumn.append('<p>No tasks to display</p>');
-        } else {
-          $.each(response.tasks, function(index, task) {
-            const taskCard = $('<div>', {
-              'class': 'task-card',
-              'draggable': true,
-              'id': `task-${task.id}`,
-              'data-id': task.id,
-              'html': `
-                <h3>${task.title}</h3>
-                <p>${task.description}</p>
-                <p>Due: ${task.due_date}</p>
-              `
-            }).on('dragstart', drag).on('click', function(event) {
-              event.stopPropagation(); // Stop click from triggering drag
-              openEditModal(task);
-            });
-  
-            // Apply styles and draggable attribute based on status
-            if (task.status === 'Done') {
-              taskCard.addClass('completed').attr('draggable', false);
-            } else {
-              taskCard.attr('draggable', true);
-            }
-  
-            // Append task card to the corresponding column
-            if (task.status === 'To Do') {
-              todoColumn.append(taskCard);
-            } else if (task.status === 'In Progress') {
-              inProgressColumn.append(taskCard);
-            } else if (task.status === 'Done') {
-              doneColumn.append(taskCard);
-            }
-          });
-        }
+      fetchAndOrganizeTasks(function(JamesTasks) {
+          const swimlanesContainer = $('#swimlanes-container');
+          swimlanesContainer.empty();
+
+          if (Object.keys(JamesTasks).length === 0) {
+              swimlanesContainer.append(createEmptyMessage());
+          } else {
+              createSwimlanes(JamesTasks);
+              appendTasksToColumns(JamesTasks);
+          }
       });
-    }
-  
+  }
+
+  function fetchAndOrganizeTasks(callback) {
+      ajaxRequest('index.php?action=get_tasks', 'GET', null, function(response) {
+          const JamesTasks = {};
+
+          if (response.tasks && response.tasks.length > 0) {
+              response.tasks.forEach(task => {
+                  if (!JamesTasks[task.user]) {
+                      JamesTasks[task.user] = {
+                          todo: [],
+                          inProgress: [],
+                          done: []
+                      };
+                  }
+                  if (task.status === 'To Do') {
+                      JamesTasks[task.user].todo.push(task);
+                  } else if (task.status === 'In Progress') {
+                      JamesTasks[task.user].inProgress.push(task);
+                  } else if (task.status === 'Done') {
+                      JamesTasks[task.user].done.push(task);
+                  }
+              });
+          }
+          callback(JamesTasks);
+      });
+  }
+
+  function createSwimlanes(JamesTasks) {
+    const swimlanesContainer = $('#swimlanes-container');
+
+    Object.keys(JamesTasks).forEach(James => {
+        const userSwimlane = $('<div>', {
+            class: 'user-swimlane',
+            style: `border-left: 5px solid #ccc;`
+        });
+
+        const header = $('<h4>', {
+            text: James
+        });
+        userSwimlane.append(header);
+
+        const columnsContainer = $('<div>', { class: 'columns-container' });
+
+        const todoColumn = $('<div>', {
+            class: 'column todo-column',
+            id: `todo-${James}-tasks`
+        }).append($('<h3>').text('To Do'));
+
+        const inProgressColumn = $('<div>', {
+            class: 'column in-progress-column',
+            id: `in-progress-${James}-tasks`
+        }).append($('<h3>').text('In Progress'));
+
+        const doneColumn = $('<div>', {
+            class: 'column done-column',
+            id: `done-${James}-tasks`
+        }).append($('<h3>').text('Done'));
+
+        columnsContainer.append(todoColumn, inProgressColumn, doneColumn);
+        userSwimlane.append(columnsContainer);
+        swimlanesContainer.append(userSwimlane);
+    });
+
+    // Add event listeners for columns
+    $('.column').on('dragover', function(event) { 
+        allowDrop(event.originalEvent); 
+    }); 
+    $('.column').on('drop', function(event) { 
+        drop(event.originalEvent); 
+    });
+}
+
+function appendTasksToColumns(JamesTasks) {
+    Object.keys(JamesTasks).forEach(James => {
+        JamesTasks[James].todo.forEach(task => {
+            const taskCard = taskFactory(task, James);
+            const todoColumn = $(`#todo-${James}-tasks`);
+            console.log(`Appending task to TODO column: #todo-${James}-tasks`, todoColumn);
+            todoColumn.append(taskCard);
+        });
+        JamesTasks[James].inProgress.forEach(task => {
+            const taskCard = taskFactory(task, James);
+            const inProgressColumn = $(`#in-progress-${James}-tasks`);
+            console.log(`Appending task to In Progress column: #in-progress-${James}-tasks`, inProgressColumn);
+            inProgressColumn.append(taskCard);
+        });
+        JamesTasks[James].done.forEach(task => {
+            const taskCard = taskFactory(task, James);
+            taskCard.addClass('completed').attr('draggable', false);
+            const doneColumn = $(`#done-${James}-tasks`);
+            console.log(`Appending task to Done column: #done-${James}-tasks`, doneColumn);
+            doneColumn.append(taskCard);
+        });
+    });
+}
+
+function taskFactory(task, James) {
+    const taskCard = $('<div>', {
+        class: 'task-card',
+        draggable: true,
+        id: `task-${task.id}`,
+        'data-id': task.id,
+        html: `
+            <h3>${task.title}</h3>
+            <p>${task.description}</p>
+            <p>Due: ${task.due_date}</p>
+        `
+    }).on('dragstart', function(event) {
+        drag(event.originalEvent);
+    }).on('click', function(event) {
+        event.stopPropagation();
+        openEditModal(task);
+    });
+
+    return taskCard;
+}
+
+function drag(event) {
+    event.dataTransfer.setData('text', event.target.id);
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    event.preventDefault();
+    const taskId = event.dataTransfer.getData('text');
+    const taskCard = document.getElementById(taskId);
+
+    const newStatus = $(event.target).closest('.column').hasClass('todo-column') ? 'To Do' :
+                      $(event.target).closest('.column').hasClass('in-progress-column') ? 'In Progress' : 'Done';
+
+    $(event.target).closest('.column').append(taskCard);
+
+    // Update task status in the backend
+    updateTaskStatus(taskId, newStatus);
+}
+
+function updateTaskStatus(taskId, newStatus) {
+    ajaxRequest(`index.php?action=update_task_status&task_id=${taskId}&status=${newStatus}`, 'POST', null, function(response) {
+        if (response.success) {
+            console.log('Task status updated successfully');
+        } else {
+            console.error('Failed to update task status');
+        }
+    });
+}
+
+
+  function createEmptyMessage() {
+      const emptyMessage = $('<p>').text('No tasks to display');
+      return emptyMessage;
+  }
   
     // Open modal for editing a task
     function openEditModal(task) {

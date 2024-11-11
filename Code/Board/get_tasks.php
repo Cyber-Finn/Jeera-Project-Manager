@@ -5,12 +5,12 @@ require_once '../auth.php';
 $user = isAuthenticated();
 
 try {
-    $stmt = $pdo->prepare('SELECT Tasks.id, Tasks.title, Tasks.description, Tasks.due_date, Statuses.description AS status 
+    $stmt = $pdo->prepare('SELECT Tasks.id, Tasks.title, Tasks.description, Tasks.due_date, Statuses.description AS status, Users.username AS user 
                            FROM Tasks 
                            JOIN Statuses ON Tasks.status_id = Statuses.id 
-                           WHERE user_id = ?');
-    $stmt->execute([$user['id']]);
-    $tasks = $stmt->fetchAll();
+                           JOIN Users ON Tasks.user_id = Users.id');
+    $stmt->execute();
+    $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode(['tasks' => $tasks]);
 } catch (Exception $e) {
