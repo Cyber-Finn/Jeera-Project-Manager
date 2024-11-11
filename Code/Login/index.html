@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeera - Login</title>
+  <link rel="stylesheet" href="../styles.css">
+  <!-- Include jQuery via CDN --> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="login.js" defer></script>
+</head>
+<body>
+  <div id="auth-container">
+    <h1>Welcome to Jeera</h1>
+    <div id="login-form">
+      <h2>Login</h2>
+      <form id="login" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required autocomplete="username">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+        <button type="submit">Login</button>
+      </form>
+      <p>Don't have an account? <button id="signup-btn">Sign Up</button></p>
+    </div>
+    <div id="signup-form" style="display: none;">
+      <h2>Sign Up</h2>
+      <form id="signup" method="POST">
+        <label for="new-username">Username:</label>
+        <input type="text" id="new-username" name="username" required autocomplete="username">
+        <label for="new-password">Password:</label>
+        <input type="password" id="new-password" name="password" required autocomplete="current-password">
+        <button type="submit">Sign Up</button>
+      </form>
+      <p>Already have an account? <button id="login-btn">Login</button></p>
+    </div>
+  </div>
+</body>
+</html>

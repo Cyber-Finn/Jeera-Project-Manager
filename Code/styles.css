@@ -22,11 +22,11 @@ body {
   /* Button to open the modal */
   #createTaskButton {
     position: fixed;
-    top: 6%;
+    top: 86%;
     right: 60px;
     background-color: #61aaf8; /* Updated to a nice blue shade */
     color: white;
-    font-size: 20px; /* Slightly smaller font size */
+    font-size: xx-large; /* Slightly smaller font size */
     border: none;
     padding: 10px 20px; /* Adjusted padding */
     border-radius: 50%;

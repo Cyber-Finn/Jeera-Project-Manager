@@ -1,6 +1,6 @@
 <?php
-require_once 'connection_details.php';
-require_once 'auth.php';
+require_once '../connection_details.php';
+require_once '../auth.php';
 
 // Authenticate user -> we don't really do anything with the $user object after this in this php file, but it's still good to make them auth upfront
 //  we also then (on every consecutive request) automatically pass this info through to the other pages

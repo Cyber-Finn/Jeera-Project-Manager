@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json'); // Ensure that we're passing JSON back
-require_once 'connection_details.php';
-require_once 'auth.php';
+require_once '../connection_details.php';
+require_once '../auth.php';
 $user = isAuthenticated();
 
 try {
