@@ -33,6 +33,7 @@ body {
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    z-index: 100;
   }
   
   /* Hover effect for the button */
@@ -72,6 +73,7 @@ body {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
+    z-index: 50;
   }
   
   /* Modal content box */
@@ -158,6 +160,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
+    z-index: 1;
 }
 
 .user-swimlane {
@@ -167,6 +170,7 @@ body {
     padding: 10px;
     border-left: 5px solid #ccc;
     /* background-color: #f9f9f9; */
+    z-index: 1;
 }
 
 .columns-container {
@@ -201,3 +205,30 @@ body {
   cursor: grab;
   position: relative;
 }
+/* Ensure the header and toggle button are aligned */
+.user-swimlane h4 {
+  display: flex;
+  align-items: start;
+  margin: 0;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+  justify-content: space-between; /* Ensure even spacing between elements */
+}
+
+/* Style the toggle button */
+.toggle-button {
+  background-color: #3995f8;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: small;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+}
+

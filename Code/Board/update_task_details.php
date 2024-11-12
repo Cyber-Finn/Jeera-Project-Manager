@@ -10,8 +10,8 @@ try {
         exit;
     }
 
-    $stmt = $pdo->prepare('UPDATE Tasks SET title = ?, description = ?, due_date = ? WHERE id = ? AND user_id = ?');
-    if ($stmt->execute([$_POST['title'], $_POST['description'], $_POST['due_date'], $_POST['id'], $user['id']])) {
+    $stmt = $pdo->prepare('UPDATE Tasks SET title = ?, description = ?, due_date = ? WHERE id = ?');
+    if ($stmt->execute([$_POST['title'], $_POST['description'], $_POST['due_date'], $_POST['id']])) {
         echo json_encode(['message' => 'Task updated successfully']);
     } else {
         echo json_encode(['message' => 'Failed to update task']);

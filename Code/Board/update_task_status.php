@@ -5,14 +5,20 @@ require_once '../auth.php';
 $user = isAuthenticated();
 
 try {
+    // Ensure valid input
     if (empty($_POST['id']) || empty($_POST['status_id'])) {
         echo json_encode(['message' => 'Invalid input']);
         exit;
     }
 
-    $stmt = $pdo->prepare('UPDATE Tasks SET status_id = ? WHERE id = ? AND user_id = ?');
-    if ($stmt->execute([$_POST['status_id'], $_POST['id'], $user['id']])) {
-        echo json_encode(['message' => 'Task updated successfully']);
+    // Prepare and execute the SQL statement
+    $stmt = $pdo->prepare('UPDATE Tasks SET status_id = ? WHERE id = ?');
+    if ($stmt->execute([$_POST['status_id'], $_POST['id']])) {
+        if ($stmt->rowCount() > 0) {
+            echo json_encode(['message' => 'Task updated successfully']);
+        } else {
+            echo json_encode(['message' => 'No rows affected']);
+        }
     } else {
         echo json_encode(['message' => 'Failed to update task status']);
     }
