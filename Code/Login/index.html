@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +9,15 @@
   <script src="login.js" defer></script>
 </head>
 <body>
+  <header id="header">
+    Welcome to JEERA
+  </header>
+  <div class="footer">
+    &copy; 2024 Stephen. All rights reserved. &reg;
+  </div>
   <div id="auth-container">
-    <h1>Welcome to Jeera</h1>
     <div id="login-form">
-      <h2>Login</h2>
+      <h2 id="login-title">Login</h2>
       <form id="login" method="POST">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required autocomplete="username">
@@ -24,7 +28,7 @@
       <p>Don't have an account? <button id="signup-btn">Sign Up</button></p>
     </div>
     <div id="signup-form" style="display: none;">
-      <h2>Sign Up</h2>
+      <h2 id="signup-title">Sign Up</h2>
       <form id="signup" method="POST">
         <label for="new-username">Username:</label>
         <input type="text" id="new-username" name="username" required autocomplete="username">

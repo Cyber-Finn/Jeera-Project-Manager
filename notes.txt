@@ -1,0 +1,6 @@
+I tried to get the mobile solution working, but ran into lots of trouble, specifically around the way that clicks are handled on mobile.
+I would've liked more time to resolve the mobile issues, but didn't focus too much on it since it was out of scope.
+
+If I get time to revisit this, I'd like to make sure that the mobile version:
+1. Headers displays nicely
+2. Can drag and drop tasks

@@ -1,5 +1,5 @@
-These scripts should be run in numerical order within MySQL.
-These scripts should only be run once, to set up the initial infrastructure of the system
+These scripts should be run in numerical order within MySQL workbench.
+These scripts should only be run once, to set up the initial infrastructure of the system.
 
 1. CREATE DATABASE TaskManagement;
 2. USE TaskManagement;
@@ -10,7 +10,6 @@ These scripts should only be run once, to set up the initial infrastructure of t
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL
 );
-
 
 4. CREATE TABLE Statuses (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,10 +28,3 @@ These scripts should only be run once, to set up the initial infrastructure of t
     FOREIGN KEY (user_id) REFERENCES Users(id),
     FOREIGN KEY (status_id) REFERENCES Statuses(id)
 );
-
-
-
-
---note: this is possibly going to cause issues because the hash will always change because of the random salt..
---loading a user: cleartext password is: TestPassword123
-INSERT INTO Users (username, password_hash, role) VALUES ('test', '$2y$10$sZ9.jA5KJq5.nyZRCG1UdutChRf0L4ud0uDkT8t6uFob4GCLm2RoC', 'user');
